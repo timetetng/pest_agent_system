@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  pest-agent:
+    build: .
+    container_name: pest-agent-system
+    restart: unless-stopped  
+    ports:
+      - "8501:8501"
+    volumes:
+      # 持久化数据目录
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Shanghai
