@@ -13,6 +13,9 @@ openai
 python-dotenv
 requests
 pillow
-markdown
-pdfkit
+markdown==3.5.2
+pdfkit==1.0.0
+
 transformers==4.48.2
+
+pysqlite3-binary
