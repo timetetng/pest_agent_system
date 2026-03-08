@@ -83,4 +83,4 @@ docker-compose up -d --build
 
 **指导教师**: 陈良 (副教授)
 
-**展示页面**：(`https://ai.lsgbin.com`)[https://ai.lsgbin.com]
+**展示页面**：[`https://ai.lsgbin.com`](https://ai.lsgbin.com)
