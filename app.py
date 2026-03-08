@@ -6,7 +6,7 @@ from config import Config
 from core.vision import PestVisionModel
 from core.rag_engine import AgriRAG
 from core.weather import get_weather
-from core.agent import generate_report
+from core.agent import generate_report_stream
 from core.pdf_exporter import export_md_to_pdf
 
 # 页面设置
