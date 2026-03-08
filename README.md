@@ -31,7 +31,11 @@
 4. 一键生成政务级公文
    - 自动生成包含危害等级评估、科学消杀建议（结合天气特征）及行政预警公文的结构化 Markdown 报告。
    - 提供导出下载 PDF 功能，极大降低基层网格员行政成本。
+
+<div align="center">
   <img src="img/img4.png" alt="pdf报告" width="70%">
+</div>
+
 ## 🛠️ 技术栈
 
 - 前端交互: Streamlit
