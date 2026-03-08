@@ -68,8 +68,9 @@ docker-compose up -d --build
 3. 系统配置
 
 在侧边栏中或系统环境中`.env`配置以下参数：
-    - LLM API Key & Base URL (如 DeepSeek 或 OpenAI 密钥)
-    - 天气 API Key (如心知天气)
+
+- LLM API Key & Base URL (如 DeepSeek 或 OpenAI 密钥)
+- 天气 API Key (如心知天气)
 
 
 ## 👥 团队信息
