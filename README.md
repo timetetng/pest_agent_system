@@ -40,7 +40,7 @@
 
 ```bash
 # 克隆仓库
-git clone [https://github.com/yourusername/pest_agent_system.git](https://github.com/yourusername/pest_agent_system.git)
+git clone https://github.com/timetetng/pest_agent_system.git
 cd pest_agent_system
 
 # 安装依赖
@@ -54,7 +54,7 @@ streamlit run app.py
 #### 方式二：Docker 部署（推荐）
 ```bash
 # 克隆仓库
-git clone [https://github.com/yourusername/pest_agent_system.git](https://github.com/yourusername/pest_agent_system.git)
+git clone https://github.com/timetetng/pest_agent_system.git
 cd pest_agent_system
 
 # 构建容器并启动
@@ -72,14 +72,14 @@ docker-compose up -d --build
     - 天气 API Key (如心知天气)
 
 
-👥 团队信息
+## 👥 团队信息
 
-    **所属学院**: 数学与信息科学学院 - **LX Lab**
+**所属学院**: 数学与信息科学学院 - **LX Lab**
 
-    **项目负责人**: 陆盛斌 
-    
-    **项目成员**: 陆盛斌(数学与信息科学学院应数221班)、谢林宏（数学与信息科学学院信科221班）
+**项目负责人**: 陆盛斌 
 
-    **指导教师**: 陈良 (副教授)
+**项目成员**: 陆盛斌(数学与信息科学学院应数221班)、谢林宏（数学与信息科学学院信科221班）
 
-    **展示页面**：(`https://ai.lsgbin.com`)[https://ai.lsgbin.com]
+**指导教师**: 陈良 (副教授)
+
+**展示页面**：(`https://ai.lsgbin.com`)[https://ai.lsgbin.com]
