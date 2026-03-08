@@ -5,7 +5,7 @@ import os
 def export_md_to_pdf(md_content, output_path="governance_report.pdf"):
     """将 Markdown 渲染为带有精美样式的 PDF"""
     
-    # 1. 将 Markdown 转换为 HTML，开启表格等扩展支持
+    # 1. 将 Markdown 转换为 HTML
     html_body = markdown.markdown(md_content, extensions=['tables', 'fenced_code', 'nl2br'])
     
     # 2. 注入 CSS 模板，强制使用文泉驿微米黑字体以支持中文
@@ -35,7 +35,7 @@ def export_md_to_pdf(md_content, output_path="governance_report.pdf"):
     </html>
     """
     
-    # 3. 配置 pdfkit (静默模式，开启本地文件访问)
+    # 3. 配置 pdfkit
     options = {
         'encoding': "UTF-8",
         'enable-local-file-access': None,
@@ -47,5 +47,8 @@ def export_md_to_pdf(md_content, output_path="governance_report.pdf"):
         pdfkit.from_string(html_template, output_path, options=options)
         return output_path
     except Exception as e:
-        print(f"PDF 生成失败: {e}")
+        print("\n" + "="*40)
+        print("❌ PDF 导出底层错误详情:")
+        print(str(e))
+        print("="*40 + "\n")
         return None

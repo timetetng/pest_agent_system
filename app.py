@@ -1,18 +1,17 @@
 import streamlit as st
 import os
 import time
-import tempfile
 from config import Config
 from core.vision import PestVisionModel
 from core.rag_engine import AgriRAG
 from core.weather import get_weather
-from core.agent import generate_report_stream
+from core.agent import generate_report_stream 
 from core.pdf_exporter import export_md_to_pdf
 
 # 页面设置
 st.set_page_config(page_title="智能农业生物安全平台", layout="wide")
 
-# 初始化全局模块 (使用 st.cache_resource 避免每次操作都重新加载模型)
+# 初始化全局模块
 @st.cache_resource
 def load_systems():
     vision = PestVisionModel(Config.MODEL_PATH)
@@ -61,28 +60,59 @@ with col2:
         with open(img_path, "wb") as f:
             f.write(img_file.getbuffer())
         
+        # 记录总开始时间
+        total_t0 = time.time()
+        
+        # --- 折叠面板：展示各模块进度与精准耗时 ---
         with st.status("正在执行多模态诊断...", expanded=True) as status:
+            t0 = time.time()
             st.write("👀 端侧视觉模型推理中...")
             pest_name, conf = vision_model.predict(img_path)
+            t1 = time.time()
+            st.markdown(f"**✅ 视觉推理完成** `(耗时: {t1-t0:.2f} 秒)` -> 结果: **{pest_name}**")
             
+            t0 = time.time()
             st.write("☁️ 获取实时气象数据...")
             weather_info = get_weather(location_input, Config.WEATHER_API_KEY)
+            t1 = time.time()
+            st.markdown(f"**✅ 气象数据获取** `(耗时: {t1-t0:.2f} 秒)` -> 状态: {weather_info}")
             
+            t0 = time.time()
             st.write("📚 检索本地 RAG 知识库...")
             rag_context = rag_system.query(pest_name)
+            t1 = time.time()
+            st.markdown(f"**✅ 知识库检索完成** `(耗时: {t1-t0:.2f} 秒)`")
             
-            st.write("🧠 Agent 生成最终决策报告...")
-            report_md = generate_report(pest_name, conf, rag_context, location_input, weather_info, Config)
-            status.update(label="诊断完成！", state="complete")
+            st.write("🧠 Agent 正在思考与撰写报告...")
+            status.update(label="正在流式生成决策报告...", state="running")
+
+        # --- 流式打字机输出 LLM 报告 ---
+        st.subheader("📝 智能决策报告")
+        report_placeholder = st.empty() 
+        report_md = ""
         
-# 生成 Markdown 报告...
-        st.markdown(report_md)
+        t0 = time.time()
         
-        # 导出 PDF 功能
+        stream_response = generate_report_stream(pest_name, conf, rag_context, location_input, weather_info, Config)
+        
+        if isinstance(stream_response, str): 
+            report_placeholder.error(stream_response)
+        else:
+            for chunk in stream_response:
+                if chunk.choices[0].delta.content is not None:
+                    report_md += chunk.choices[0].delta.content
+                    report_placeholder.markdown(report_md + "▌") 
+            report_placeholder.markdown(report_md)
+            
+        t1 = time.time()
+        total_t1 = time.time()
+        
+        st.success(f"🎉 诊断完成！LLM 生成耗时: `{t1-t0:.2f} 秒` | 总耗时: `{total_t1-total_t0:.2f} 秒`")
+        
+        # --- 导出与下载区 ---
         st.write("---")
         col_dl1, col_dl2 = st.columns(2)
         
-        # 现有的 MD 下载按钮
         with col_dl1:
             st.download_button(
                 label="📥 下载 Markdown 源文件",
@@ -92,10 +122,11 @@ with col2:
                 use_container_width=True
             )
             
-        # 新增的 PDF 下载按钮
         with col_dl2:
-            with st.spinner("正在排版并生成 PDF 报告..."):
-                pdf_path = export_md_to_pdf(report_md, os.path.join(Config.UPLOAD_DIR, "report.pdf"))
+            with st.spinner("⏳ 正在排版并生成 PDF 报告..."):
+                pdf_output_path = os.path.join(Config.UPLOAD_DIR, "report.pdf")
+                pdf_path = export_md_to_pdf(report_md, pdf_output_path)
+                
                 if pdf_path and os.path.exists(pdf_path):
                     with open(pdf_path, "rb") as pdf_file:
                         st.download_button(
@@ -105,3 +136,5 @@ with col2:
                             mime="application/pdf",
                             use_container_width=True
                         )
+                else:
+                    st.error("PDF 导出失败，请检查 Docker 环境是否已安装 wkhtmltopdf 和相关字体。")
